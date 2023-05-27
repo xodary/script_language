@@ -55,16 +55,16 @@ def extractBookData(strXml):
     print(itemElements)
     for item in itemElements:
         image = item.find("image")
-        author = item.find("image")
+        author = item.find("author")
         strTitle = item.find("title")
         discount = item.find("discount")
         publisher = item.find("publisher")
+        description = item.find("description")
         print (strTitle)
 
         if len(strTitle.text) > 0 :
-           # return {"author":author.text,"title":strTitle.text, "image":image.text,
-           #         "discount":discount.text, "publisher": publisher.text}
-            return image.text
+           return {"author":author.text,"title":strTitle.text, "image":image.text,
+                   "discount":discount.text, "publisher": publisher.text, "description":description.text}
 
 def sendMain():
     global host, port
