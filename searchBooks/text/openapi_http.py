@@ -12,7 +12,7 @@ conn = http.client.HTTPSConnection("openapi.naver.com")
 headers = {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
 # encText = "love"
 encText = urllib.parse.quote('그리고 아무도 없었다')
-params = "?query=" + encText + "&display=10&start=1"
+params = "?query=" + encText + "&display=2&start=1"
 
 # isbn = '9780596513986' #Learning Python 3(E) isbn
 # params = "?d_isbn=" + isbn

@@ -28,13 +28,13 @@ def connectOpenAPIServer():
         
 def getBookDataFromTitle(str):
     global server, conn, client_ID, client_secret
-    if conn == None :
+    if conn is None:
         connectOpenAPIServer()
     encText = str
     if not encText.encode().isalpha():
         encText = urllib.parse.quote(encText)
-    uri = userURIBuilder("/v1/search/book.xml", display="1", start="1", query=encText)
-    conn.request("GET", uri, None, {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret})
+    url = userURIBuilder("/v1/search/book.xml", display="2", start="1", query=encText)
+    conn.request("GET", url, None, {'User-Agent':'Mozilla/5.0', "X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret})
     
     req = conn.getresponse()
     print (req.status)
@@ -53,6 +53,7 @@ def extractBookData(strXml):
     itemElements = tree.iter("item")  # return list type
     #itemElements = tree.getiterator("item")  # return list type
     print(itemElements)
+    l = []
     for item in itemElements:
         image = item.find("image")
         author = item.find("author")
@@ -63,8 +64,9 @@ def extractBookData(strXml):
         print (strTitle)
 
         if len(strTitle.text) > 0 :
-           return {"author":author.text,"title":strTitle.text, "image":image.text,
-                   "discount":discount.text, "publisher": publisher.text, "description":description.text}
+           l.append({"author":author.text,"title":strTitle.text, "image":image.text,
+                   "discount":discount.text, "publisher": publisher.text, "description":description.text})
+    return l
 
 def sendMain():
     global host, port
