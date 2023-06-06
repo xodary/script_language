@@ -1,4 +1,5 @@
 import framework
-import TestMain
+import SearchFramework
+import GlobalWindow
 
-framework.run(TestMain)
+framework.run(SearchFramework)

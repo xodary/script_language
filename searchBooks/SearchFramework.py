@@ -9,17 +9,20 @@ import BookClass
 
 GUI = None
 
+
 def enter():
     global GUI
     GUI = SearchBookGUI()
     GUI.enter()
-    GlobalWindow.window.mainloop()
+
 
 def pause():
     GUI.pause()
 
+
 def resume():
     GUI.resume()
+
 
 def exit():
     GUI.exit()
@@ -29,9 +32,13 @@ class SearchBookGUI:
     bookImageHeight = 300
 
     def enter(self):
+        bookDatas = internetbook.getBookDataFromTitle('python')
+        b = BookClass.Book(bookDatas[0])
+        GlobalWindow.myBookList[0].append(b)
+
+        # xml 파일 읽어서 global 변수인 MyBookList에 넣기
         self.searchFrame = tkinter.Frame(GlobalWindow.window)
         self.searchFrame.pack()
-        self.canvas = Canvas(self.searchFrame, bg='white', width=400, height=300)
         self.searchLabel = Label(self.searchFrame, text="책 제목으로 검색", font=self.fontstyleBig)
         self.searchLabel.pack(side='left')
         self.searchEntry = Entry(self.searchFrame, font=self.fontstyleBig)
@@ -39,6 +46,46 @@ class SearchBookGUI:
         self.searchButton = Button(self.searchFrame, text="검색", font=self.fontstyleBig,
                                    command=self.getBookDataFromTITLE)
         self.searchButton.pack(side='left')
+
+        self.myBooklistFrame = tkinter.Frame(GlobalWindow.window)
+        self.myBookList = []
+        self.myBooklistFrame.pack()
+        white = 20
+        self.past = Label(self.myBooklistFrame, relief='solid',
+                          borderwidth=3, width=55, height=30, bg='#bfd9c6')
+        self.past.pack(side="left", padx=white, pady=2 * white)
+        self.past.propagate(0)
+        self.pastText = Label(self.past, text='과거에\n읽었던 책',
+                              font=self.fontstyleBig, bg='#bfd9c6')
+        self.pastText.pack(pady=white*2)
+        self.imageLabelPast = Frame(self.past)
+        self.imageLabelPast.pack(pady=white*2)
+        for n in range(6):
+            if len(GlobalWindow.myBookList[0]) > n:
+                image = GlobalWindow.myBookList[0][n].getImage(150)
+                Label(self.imageLabelPast, image=image).grid(row=(n//3), column=n)
+            else:
+                break
+
+        print()
+
+
+
+        self.present = Label(self.myBooklistFrame, relief='solid',
+                             borderwidth=3, width=55, height=30, bg='#d8d9bf')
+        self.present.pack(side="left", padx=white, pady=2 * white)
+        self.present.propagate(0)
+        self.presentText = Label(self.present, text='현재에\n읽고 있는 책',
+                                 font=self.fontstyleBig, bg='#d8d9bf')
+        self.presentText.pack(pady=white*2)
+
+        self.future = Label(self.myBooklistFrame, relief='solid',
+                            borderwidth=3, width=55, height=30, bg='#d9bfc3')
+        self.future.pack(side="left", padx=white, pady=2 * white)
+        self.future.propagate(0)
+        self.futureText = Label(self.future, text='미래에\n읽고 싶은 책',
+                                font=self.fontstyleBig, bg='#d9bfc3')
+        self.futureText.pack(pady=white*2)
 
     def exit(self):
         for frame in self.bookListFrames:
@@ -67,11 +114,10 @@ class SearchBookGUI:
 
     def getBookDataFromTITLE(self):
         print('버튼 눌림')
+        self.myBooklistFrame.pack_forget()
         title = (self.searchEntry.get())
         bookDatas = internetbook.getBookDataFromTitle(title)
         bookClickFunc = [self.bookClickUp, self.bookClickDown]
-        # self.bookListBox = Listbox(GlobalWindow.window)
-        # self.bookListBox.pack()
         self.bookList = []
         self.bookListFrames = []
         for idx, bookData in enumerate(bookDatas):
@@ -112,8 +158,6 @@ class SearchBookGUI:
                 label.bind("<Button-1>", bookClickFunc[idx])
 
     def __init__(self):
-        self.fontstyleBig = font.Font(GlobalWindow.window, size=20, weight='bold', family='맑은 고딕')
-        self.fontstyleMedium = font.Font(GlobalWindow.window, size=15, weight='bold', family='맑은 고딕')
+        self.fontstyleBig = font.Font(GlobalWindow.window, size=30, weight='bold', family='맑은 고딕')
+        self.fontstyleMedium = font.Font(GlobalWindow.window, size=20, weight='bold', family='맑은 고딕')
         self.fontstyleSmall = font.Font(GlobalWindow.window, size=10, weight='bold', family='맑은 고딕')
-
-

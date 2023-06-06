@@ -12,6 +12,7 @@ class Book:
         self.discount = bookData['discount']
         self.publisher = bookData['publisher']
         self.description = bookData['description']
+        self.memo = ''
 
     def getImage(self, height):
         with urllib.request.urlopen(self.image) as u:  # image 출력
@@ -21,6 +22,9 @@ class Book:
             (int(height * openImage.size[0] / openImage.size[1]), height))
         self.outImage = ImageTk.PhotoImage(resizedImage)
         return self.outImage
+
+    def getMemo(self):
+        return self.memo
 
     def getTitle(self):
         return self.title
@@ -36,3 +40,6 @@ class Book:
 
     def getDescription(self):
         return self.description
+
+    def setMemo(self, text):
+        self.memo = text
