@@ -7,3 +7,4 @@ height = 1080
 
 book = None
 myBookList = [[],[],[]]
+mark = 0

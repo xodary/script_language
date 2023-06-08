@@ -3,6 +3,8 @@ from tkinter import font
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
 
+import framework
+
 GUI = None
 
 
@@ -81,8 +83,9 @@ class BookInformationGUI:
                                  text='메모 저장', command=self.pressSave)
         self.saveButton.pack(padx=20, pady=20)
 
-    def exit(self):
-        pass
+        self.exitButton = Button(self.AllPage, command=self.pressExitButton,
+                                 text='뒤로가기', font=self.fontstyleMedium)
+        self.exitButton.grid(row=0, column=2, sticky=NW, pady=20)
 
     def resume(self):
         pass
@@ -96,9 +99,11 @@ class BookInformationGUI:
                 if self.myBook == b:
                     b.setMemo(self.myMemoText.get('1.0', END))
                     print(b.getMemo())
+                    return
         print('어디에라도 넣으세요')
 
-
+    def pressExitButton(self):
+        framework.pop_state()
 
     def Check(self, n):
         if not self.myBook in GlobalWindow.myBookList[n]:
