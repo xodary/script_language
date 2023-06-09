@@ -1,3 +1,5 @@
+import tkinter.messagebox
+
 import GlobalWindow
 from tkinter import font
 from tkinter import *
@@ -62,7 +64,7 @@ class BookInformationGUI:
                                         command=self.CheckPast, bg='white'))
         self.checkboxList[-1].grid(sticky=W, pady=5)
         self.checkboxList.append(Button(self.checkboxFrame, text='지금 읽고 있는 책', font=self.fontstyleMedium,
-                                        command=self.CheckNow, bg='white'))
+                                        command=self.CheckPresent, bg='white'))
         self.checkboxList[-1].grid(sticky=W, pady=5)
         self.checkboxList.append(Button(self.checkboxFrame, text='나중에 읽고 싶은 책', font=self.fontstyleMedium,
                                         command=self.CheckFuture, bg='white'))
@@ -78,6 +80,7 @@ class BookInformationGUI:
         self.TextScrollbar = Scrollbar(self.myMemoTextFrame)
         self.myMemoText = ScrolledText(self.myMemoTextFrame, yscrollcommand=self.TextScrollbar.set,
                                        height=20, width=30, font=self.fontstyleMedium)
+        self.myMemoText.insert('1.0',self.myBook.getMemo(),END)
         self.myMemoText.pack()
         self.saveButton = Button(self.myMemoFrame, font=self.fontstyleMedium,
                                  text='메모 저장', command=self.pressSave)
@@ -87,6 +90,8 @@ class BookInformationGUI:
                                  text='뒤로가기', font=self.fontstyleMedium)
         self.exitButton.grid(row=0, column=2, sticky=NW, pady=20)
 
+    def pause(self):
+        pass
     def resume(self):
         pass
 
@@ -100,7 +105,10 @@ class BookInformationGUI:
                     b.setMemo(self.myMemoText.get('1.0', END))
                     print(b.getMemo())
                     return
-        print('어디에라도 넣으세요')
+        tkinter.messagebox.showinfo(title='책을 추가하세요.',
+                                    message='메모를 남기기전에,\n'
+                                            '먼저 나의 리스트에\n'
+                                            '책을 추가해야 합니다.')
 
     def pressExitButton(self):
         framework.pop_state()
@@ -123,7 +131,7 @@ class BookInformationGUI:
         self.Uncheck(1)
         self.Uncheck(2)
 
-    def CheckNow(self):
+    def CheckPresent(self):
         self.Check(1)
         self.Uncheck(0)
         self.Uncheck(2)

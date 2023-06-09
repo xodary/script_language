@@ -11,6 +11,13 @@ GUI = None
 def enter():
     global GUI
     GUI = myBookListGUI()
+    GUI.enter()
+
+def pause():
+    GUI.pause()
+
+def resume():
+    GUI.resume()
 
 def exit():
     GUI.exit()
@@ -25,6 +32,16 @@ class myBookListGUI:
         self.ExitButton.destroy()
         self.leftButton.destroy()
         self.rightButton.destroy()
+
+    def pause(self):
+        self.ListFrame.pack_forget()
+        self.ExitButton.place_forget()
+        self.leftButton.place_forget()
+        self.rightButton.place_forget()
+
+    def resume(self):
+        self.setInfo()
+
 
     def pressedExitButton(self):
         framework.change_state(SearchFramework)
@@ -44,18 +61,18 @@ class myBookListGUI:
         GlobalWindow.book = self.mybookList[self.index + 2]
         framework.push_state(BookInformationFramework)
 
-    def __init__(self):
+    def setInfo(self):
         self.index = 0
         self.mybookList = GlobalWindow.myBookList[GlobalWindow.mark]
         self.mybookLen = len(self.mybookList)
         self.ListFrame = Frame(GlobalWindow.window)
-        self.ListFrame.pack()
+        self.ListFrame.pack(pady=30)
         self.myBooksFrame = Frame(self.ListFrame)
         self.myBooksFrame.pack()
         bookClickFunc = [self.first, self.second, self.third]
         self.ExitButton = Button(GlobalWindow.window, command=self.pressedExitButton,
                                  text='뒤로 가기', font=self.fontstyleMedium)
-        self.ExitButton.place(x=1600, y=50)
+        self.ExitButton.place(x=1650, y=50)
         self.leftButton = Button(GlobalWindow.window, text='뒤로',
                                  font=self.fontstyleMedium, command=self.pressLeftButton)
         self.leftButton.place(x=800 - 70, y=950)
@@ -109,6 +126,12 @@ class myBookListGUI:
         for i in range(3):
             if self.index * 3 + i < self.mybookLen:
                 self.bookListFrames[i].pack()
+
+    def __init__(self):
+        pass
+
+    def enter(self):
+        self.setInfo()
 
 
     def pressLeftButton(self):

@@ -44,6 +44,10 @@ class SearchBookGUI:
         self.searchButton = Button(self.searchFrame, text="검색", font=self.fontstyleBig,
                                    command=self.getBookDataFromTITLE)
         self.searchButton.pack(side='left')
+        self.drawMain()
+    def drawMain(self):
+        # l = internetbook.getBookDataFromTitle('a')
+        # GlobalWindow.myBookList[0].append(BookClass.Book(l[0]))
 
         self.myBooklistFrame = tkinter.Frame(GlobalWindow.window)
         self.myBookList = []
@@ -85,8 +89,8 @@ class SearchBookGUI:
             self.childPast.pack()
 
         def click1(event):
-            framework.change_state(myBookListFramework)
             GlobalWindow.mark = 0
+            framework.change_state(myBookListFramework)
 
         self.past.bind("<Enter>", reliefThickPast)
         self.past.bind("<Leave>", reliefThinPast)
@@ -130,8 +134,8 @@ class SearchBookGUI:
             self.childPresent.pack()
 
         def click2(event):
-            framework.change_state(myBookListFramework)
             GlobalWindow.mark = 1
+            framework.change_state(myBookListFramework)
 
         self.present.bind("<Enter>", reliefThickPresent)
         self.present.bind("<Leave>", reliefThinPresent)
@@ -151,13 +155,13 @@ class SearchBookGUI:
                                 font=self.fontstyleBig, bg='#d9bfc3')
         self.futureClickList.append(self.futureText)
         self.futureText.pack(pady=white * 2)
-        self.imageLabelPresent = Frame(self.childFuture, bg='#d9bfc3')
-        self.futureClickList.append(self.imageLabelPresent)
-        self.imageLabelPast.pack(pady=white * 2)
+        self.imageLabelFuture = Frame(self.childFuture, bg='#d9bfc3')
+        self.futureClickList.append(self.imageLabelFuture)
+        self.imageLabelFuture.pack(pady=white * 2)
         for n in range(6):
             if len(GlobalWindow.myBookList[2]) > n:
                 image = GlobalWindow.myBookList[2][n].getImage(150)
-                l = Label(self.imageLabelPast, image=image, bg='black')
+                l = Label(self.imageLabelFuture, image=image, bg='black')
                 l.grid(row=(n // 3), column=(n % 3), padx=15, pady=20)
                 self.futureClickList.append(l)
             else:
@@ -174,8 +178,8 @@ class SearchBookGUI:
             self.childFuture.pack()
 
         def click3(event):
-            framework.change_state(myBookListFramework)
             GlobalWindow.mark = 2
+            framework.change_state(myBookListFramework)
 
         self.future.bind("<Enter>", reliefThickFuture)
         self.future.bind("<Leave>", reliefThinFuture)
@@ -203,7 +207,7 @@ class SearchBookGUI:
     def reset(self):
         for frame in self.bookListFrames:
             frame.pack_forget()
-        self.myBooklistFrame.pack()
+        self.drawMain()
 
 
     def bookClickUp(self, event):
@@ -228,6 +232,10 @@ class SearchBookGUI:
         self.bookListFrames = []
         self.imageLabels = []
         self.images = []
+        if not bookDatas:
+            i = Label(GlobalWindow.window, text='검색결과가 없습니다.', font=self.fontstyleMedium)
+            self.bookListFrames.append(i)
+            i.pack()
         for idx, bookData in enumerate(bookDatas):
             B = BookClass.Book(bookData)
             self.bookList.append(B)
