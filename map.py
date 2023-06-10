@@ -1,16 +1,19 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+
+import canvas as canvas
 import requests
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageTk
 import io
 from googlemaps import Client
-
+from matplotlib.figure import Figure
 
 zoom = 13
 
 # 공공데이터 API 키
 api_key = "79c17274ed8d431996adaa9ce6c574fd"
+# real_key = "AIzaSyBGD2TN0A_nRLExYVnu3xVgdLa5GQRE6D4"
 
 # 경기도 도서 관련 업체 현황 데이터
 url = "https://openapi.gg.go.kr/GgCertflyRegionBkstr"
@@ -24,6 +27,7 @@ root = ET.fromstring(response.content)
 items = root.findall(".//row")
 
 bookstores = []
+
 for item in items:
     bookstore = {
         "name":item.findtext("BKSTR_NM"),               # 도서관 이름
@@ -34,9 +38,19 @@ for item in items:
     }
     bookstores.append(bookstore)
 
+# 시군별 서점 정보 딕셔너리에 저장 -> {'시군명' : 서점 수}
+sigun_bookstore_num = {}
+
+for bookstore in bookstores:
+    if sigun_bookstore_num.get(bookstore['sigun']):
+        sigun_bookstore_num[bookstore['sigun']] += 1
+    else:
+        sigun_bookstore_num[bookstore['sigun']] = 1
+
+
 # Google Maps API 클라이언트 생성 (한달에 $20 까지 무료)
 # https://console.cloud.google.com/apis/credentials
-Google_API_Key = 'AIzaSyBNfqfv-0h2OVa2MMJ5lqEd48RTyvR4gqw'
+Google_API_Key = 'AIzaSyBGD2TN0A_nRLExYVnu3xVgdLa5GQRE6D4'
 gmaps = Client(key=Google_API_Key)
 
 # 경기도 지도 생성
@@ -65,13 +79,26 @@ sigun_combo.pack()
 def show_bookstores():
     bookstore_list.delete(0, tk.END)
 
-    sigun_name = selected_sigun.get()
-    bookstores_in_sigun = [bookstore for bookstore in bookstores if bookstore['sigun'] == sigun_name]
+    bookstore_key = list(sigun_bookstore_num.keys())
+    bookstore_value = list(sigun_bookstore_num.values())
 
-    bookstore_names = [bookstore['name'] for bookstore in bookstores_in_sigun]
+    for i in range(16):
+        bookstore_list.insert(tk.END, f"{bookstore_key[i]}")
 
-    for bookstore in bookstores_in_sigun:
-        bookstore_list.insert(tk.END, f"{bookstore['name']}")
+    canvas.delete('all')
+
+    max_bookstore_count = max(bookstore_value)
+    bar_width = 20
+    x_gap = 30
+    x0 = 20
+    y0 = 250
+
+    for i in range(16):
+        x1 = x0 + i * (bar_width + x_gap)
+        y1 = y0 - 200 * bookstore_value[i] / max_bookstore_count
+        canvas.create_rectangle(x1, y1, x1 + bar_width, y0, fill = 'blue')
+        canvas.create_text(x1 + bar_width/2 , y0+100, text=bookstore_key[i], anchor='n', angle=90)
+        canvas.create_text(x1 + bar_width/2, y1-10, text=bookstore_value[i], anchor='s')
 
 def update_map():
     global zoom
@@ -112,7 +139,7 @@ def zoom_out():
     update_map()
 
 # 캔버스 생성
-canvas = tk.Canvas(root, width=800, height=0)
+canvas = tk.Canvas(root, width=800, height=400)
 canvas.pack()
 
 # 서점 목록 리스트박스 생성
@@ -122,7 +149,7 @@ bookstore_list.pack(side=tk.LEFT, fill=tk.BOTH)
 # # 스크롤바 생성
 # scrollbar = tk.Scrollbar(root)
 # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-#
+
 # # 스크롤바와 서점 목록 연결
 # bookstore_list.config(yscrollcommand=scrollbar.set)
 # scrollbar.config(command=bookstore_list.yview)
